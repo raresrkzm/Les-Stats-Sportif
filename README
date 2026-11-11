@@ -1,0 +1,66 @@
+Cărăușu Nelu-Rareș-Ionuț 
+341C4
+
+Tema 1 ASC
+
+
+Organizare
+
+Structura aplicației este împărțită în mai multe fișiere:
+
+__init__.py: Inițializează aplicația Flask, încarcă datele, creează thread pool-ul pentru joburi asincrone.
+
+data_ingestor.py: Clasa DataIngestor oferă metode pentru prelucrarea statistică a datasetului (ex: medii pe state, diferențe față de media globală etc.).
+
+routes.py: Definește toate rutele API și integrează execuția asincronă a cererilor.
+
+task_runner.py: Implementează un ThreadPool pentru procesarea paralelă a cererilor.
+
+logger.py: Urmărește comportamentul serverului prin implementarea fișierului webserver.log.
+
+TestWebserver.py: Teste unitare pentru toate rutele API.
+
+
+Pentru fiecare rută API (ex. /api/states_mean), se definește un job:
+    def job():
+        return webserver.data_ingestor.get_states_mean(question)
+
+Această funcție din interiorul fiecarei funcții ale rutelor apelează funcția care calculează valorile statistice.
+Cu ajutorul funcției auxiliare register_job,job-ul este înregistrat în ThreadPool pentru execuție.
+
+ThreadPool-ul gestionează un număr de thread-uri care preiau joburile dintr-o coadă și le procesează. 
+Partea de procesare a jourilor este realizată într-o buclă în metoda run() din clasa TaskRunner().
+
+În job_callable() este salvată una dintre funcțiile care calculează statisticile din csv. 
+Rezultatele sunt scrise în directorul results/ sub forma de fișiere json, jobul marcându-se ca 
+"done" dacă a fost executat cu succes.
+
+Consider că tema este utilă pentru a învăta lucrul cu thread-uri și a experimenta 
+procesul de lucru cu serverul. 
+
+Implementarea făcută de mine cred că este una destul de simplistă. Cu resurse de timp mai mari,
+se putea face ceva și mai bun.
+
+
+Implementare
+
+Am implementat întreaga temă. La fișierul git-log nu e clar ce ar trebui să afișeze, dar a fost făcut.
+
+Dificultățile de la această temă au constat în faptul că nu sunt familiar deloc cu Flask-ul. Acest lucru
+a întărziat procesul de realizare al temei, fiind nevoit să mă documentez înainte.
+
+
+Resurse utilizate:
+
+- pentru Flask: ceva tutoriale pe youtube; consider că nu sunt așa relevante pentru a fi puse aici
+
+https://flask.palletsprojects.com/en/stable/
+https://python-adv-web-apps.readthedocs.io/en/latest/flask.html
+https://hackersandslackers.com/flask-routes/
+Laborator 2 ASC - https://ocw.cs.pub.ro/courses/asc/laboratoare/02
+Laborator 3 ASC - https://ocw.cs.pub.ro/courses/asc/laboratoare/03
+https://docs.python.org/3/library/logging.html
+https://medium.com/@sachinsoni600517/logging-in-python-a-step-by-step-tutorial-086a617f4eaa
+
+Link github:
+https://github.com/RaresRKZM/ASC-Le-Stats-Sportif
